@@ -25,41 +25,41 @@ const LoginPage = () => {
       alert(data.message)
       router.push(`/verify?email=${email}`)
     } catch (error: any) {
-      alert(error.response.data?.message || error.message)
+      if (!error.response) {
+        alert("Unable to connect to server.");
+        return;
+      }
+      alert(error.response.data.message)
+      // console.log(error)
+      // console.log(error.response)
     } finally {
       setLoading(false)
     }
-
   };
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="absolute right-[-120px] top-[-120px] h-72 w-72 rounded-full bg-green-200/30 blur-3xl" />
       <div className="absolute bottom-[-120px] left-[-120px] h-72 w-72 rounded-full bg-green-300/20 blur-3xl" />
-
       <div className="w-full max-w-md">
         <div className="mb-10 text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-xl bg-green-500 text-white shadow-lg">
             <MessageCircle size={32} />
           </div>
-
           <h1 className="text-4xl font-bold">YoChat</h1>
           <p className="mt-2 text-gray-500">
             Welcome back! Ready to chat?
           </p>
         </div>
-
         <div className="rounded-2xl border bg-white p-8 shadow-lg">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label className="mb-2 block text-sm font-medium">Email</label>
-
               <div className="relative">
                 <Mail
                   className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
                   size={20}
                 />
-
                 <input
                   type="email"
                   id='email'
@@ -71,9 +71,6 @@ const LoginPage = () => {
                 />
               </div>
             </div>
-
-
-
             <button
               disabled={loading}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-green-500 py-3 font-semibold text-white transition hover:bg-green-600 disabled:opacity-70 disabled:cursor-not-allowed"
@@ -81,7 +78,6 @@ const LoginPage = () => {
               {loading ? "Sending..." : "Send Verification Code"}
               {!loading && <ArrowRight size={18} />}
             </button>
-
             <div className="flex items-center gap-3">
               <div className="h-px flex-1 bg-gray-200" />
               <span className="text-sm text-gray-400">
@@ -95,12 +91,8 @@ const LoginPage = () => {
             >
               Google
             </button>
-
-
-
           </form>
         </div>
-
         <p className="mt-6 text-center text-sm text-gray-500">
           Don't have an account?
           <button className="ml-1 font-semibold text-green-600 hover:underline">
