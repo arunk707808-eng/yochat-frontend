@@ -9,10 +9,14 @@ import {
   ArrowRight,
 } from "lucide-react";
 import axios from 'axios';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
+import { useAppData, USER_SERVICE } from '@/context/appContext';
+import Loading from '@/components/Loading';
+import toast from 'react-hot-toast';
 
 
 const LoginPage = () => {
+  const {isAuth, loading:userLoading} = useAppData()
   const [email, setEmail] = useState<string>("")
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter()
@@ -21,21 +25,27 @@ const LoginPage = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const { data } = await axios.post(`http://localhost:7000/api/v1/auth/login`, { email })
-      alert(data.message)
+      const { data } = await axios.post(`${USER_SERVICE}/api/v1/auth/login`, { email },{withCredentials:true})
+      toast.success(data.message)
       router.push(`/verify?email=${email}`)
     } catch (error: any) {
       if (!error.response) {
-        alert("Unable to connect to server.");
+        toast.error("Unable to connect to server.");
         return;
       }
-      alert(error.response.data.message)
+      toast.error(error.response.data.message)
       // console.log(error)
       // console.log(error.response)
     } finally {
       setLoading(false)
     }
   };
+  if(userLoading){
+    return <Loading/>
+  }
+  if(isAuth){
+    redirect("/chat")
+  }
 
   return (
     <div className="relative flex min-h-screen items-center justify-center bg-gray-50 p-4">
